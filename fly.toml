@@ -1,0 +1,30 @@
+# Ersetze "dein-app-name" durch den Namen, den du bei Fly.io gewählt hast
+app = "dein-app-name"
+primary_region = "fra" # "fra" steht für Frankfurt, am besten für Deutschland
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 3000 # Dies muss derselbe Port wie in deinem Python-Code sein
+  force_https = true
+  auto_stop_machines = false # Verhindert, dass der Server ausgeht, wenn keiner verbunden ist
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
